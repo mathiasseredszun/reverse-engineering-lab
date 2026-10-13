@@ -1,0 +1,65 @@
+[
+  {
+    "command": [
+      "./build/token_gate",
+      "LAB-ONLY"
+    ],
+    "exit_code": 0,
+    "stdout": "accepted\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "./build/token_gate",
+      "wrong"
+    ],
+    "exit_code": 1,
+    "stdout": "rejected\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "./build/record_count",
+      "64"
+    ],
+    "exit_code": 0,
+    "stdout": "legacy=accept fixed=accept\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "./build/record_count",
+      "65"
+    ],
+    "exit_code": 0,
+    "stdout": "legacy=reject fixed=reject\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "./build/record_count",
+      "65536"
+    ],
+    "exit_code": 0,
+    "stdout": "legacy=accept fixed=reject\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "./build/record_count",
+      "-1"
+    ],
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "./build/record_count",
+      "4294967296"
+    ],
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": ""
+  }
+]
