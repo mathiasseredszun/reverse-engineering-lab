@@ -19,7 +19,7 @@ Linux x86-64 / Ubuntu 24.04, GCC, GNU make, binutils and Python 3.12+ are requir
 There are no Python package dependencies. On Windows, use Ubuntu in WSL:
 
 ```powershell
-wsl -d Ubuntu-24.04 --cd . -- make check-reproducible
+wsl -d Ubuntu-24.04 --cd "$PWD" -- make check-reproducible
 ```
 
 Run that command from this repository directory. Alternatively, inside Linux:

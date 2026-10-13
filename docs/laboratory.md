@@ -4,7 +4,7 @@
 
 Ubuntu 24.04, x86-64, GCC, make, binutils, Python 3.12+; Ghidra 12.1.4 and
 JDK 21 for decompilation. On a fresh Ubuntu installation, an administrator can
-install the core tools with `sudo apt-get install gcc make binutils python3`.
+install the core tools with `sudo apt-get install gcc libc6-dev make binutils python3`.
 No Python dependencies or API credentials are required.
 
 ```sh
