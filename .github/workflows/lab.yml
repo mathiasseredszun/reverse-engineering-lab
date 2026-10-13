@@ -1,0 +1,66 @@
+name: Defensive laboratory
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lab-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Tests, reproducible builds and undefined-behavior checks
+        run: make check-reproducible sanitize
+      - name: Install pinned official Ghidra
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --output "$RUNNER_TEMP/ghidra.zip" \
+            https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.1.4_build/ghidra_12.1.4_PUBLIC_20260921.zip
+          echo "ddac49f903da9d5bac833e5cc79395098b9c33cfd3279be5f31bd00387d2d4db  $RUNNER_TEMP/ghidra.zip" | sha256sum --check
+          unzip -q "$RUNNER_TEMP/ghidra.zip" -d "$RUNNER_TEMP"
+      - name: Headless decompilation
+        shell: bash
+        run: |
+          export JAVA_HOME="$JAVA_HOME_21_X64"
+          export PATH="$JAVA_HOME/bin:$PATH"
+          export GHIDRA_HOME="$RUNNER_TEMP/ghidra_12.1.4_PUBLIC"
+          make ghidra
+      - name: Container build
+        run: docker build --platform linux/amd64 -t reverse-engineering-lab:ci .
+      - name: Container exercise without network or host mounts
+        run: |
+          docker run --rm --platform linux/amd64 --network none --read-only \
+            --cap-drop ALL --security-opt no-new-privileges \
+            --pids-limit 128 --memory 512m --cpus 2 \
+            --tmpfs /lab/build:rw,exec,nosuid,nodev,uid=10001,gid=10001,mode=0700 \
+            --tmpfs /lab/evidence:rw,uid=10001,gid=10001,mode=0700 \
+            --tmpfs /tmp:rw,noexec,nosuid,size=64m \
+            reverse-engineering-lab:ci
+      - name: Retain synthetic evidence and generated binaries
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: synthetic-lab-evidence
+          path: |
+            evidence/
+            build/token_gate
+            build/token_gate.stripped
+            build/record_count
+            build/record_count.stripped
+          retention-days: 14
+          if-no-files-found: error

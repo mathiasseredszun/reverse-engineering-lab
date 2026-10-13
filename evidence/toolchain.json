@@ -1,0 +1,17 @@
+{
+  "build_command": "make check-reproducible",
+  "limits": "No cross-toolchain byte-identity claim; no third-party inputs.",
+  "platform": "Linux x86-64",
+  "source_sha256": {
+    "labs/record_count.c": "01c13dfe6f76b73cb5b67343575876476f9865010eb5f6c3ae5542df12201052",
+    "labs/token_gate.c": "d9e80c93ca98035f95ae87bb6a5f321747e2cc5bf49e5cc126cd715308656797"
+  },
+  "versions": {
+    "gcc": "gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "ld": "GNU ld (GNU Binutils for Ubuntu) 2.42",
+    "make": "GNU Make 4.3",
+    "objdump": "GNU objdump (GNU Binutils for Ubuntu) 2.42",
+    "python3": "Python 3.12.3",
+    "strip": "GNU strip (GNU Binutils for Ubuntu) 2.42"
+  }
+}
