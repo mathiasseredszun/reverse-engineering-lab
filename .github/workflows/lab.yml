@@ -48,7 +48,7 @@ jobs:
           docker run --rm --platform linux/amd64 --network none --read-only \
             --cap-drop ALL --security-opt no-new-privileges \
             --pids-limit 128 --memory 512m --cpus 2 \
-            --tmpfs /lab/build:rw,uid=10001,gid=10001,mode=0700 \
+            --tmpfs /lab/build:rw,exec,nosuid,nodev,uid=10001,gid=10001,mode=0700 \
             --tmpfs /lab/evidence:rw,uid=10001,gid=10001,mode=0700 \
             --tmpfs /tmp:rw,noexec,nosuid,size=64m \
             reverse-engineering-lab:ci

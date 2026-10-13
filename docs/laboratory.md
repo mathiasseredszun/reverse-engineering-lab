@@ -24,14 +24,18 @@ docker build --platform linux/amd64 -t reverse-engineering-lab:local .
 docker run --rm --platform linux/amd64 --network none --read-only \
   --cap-drop ALL --security-opt no-new-privileges \
   --pids-limit 128 --memory 512m --cpus 2 \
-  --tmpfs /lab/build:rw,uid=10001,gid=10001,mode=0700 \
+  --tmpfs /lab/build:rw,exec,nosuid,nodev,uid=10001,gid=10001,mode=0700 \
   --tmpfs /lab/evidence:rw,uid=10001,gid=10001,mode=0700 \
   --tmpfs /tmp:rw,noexec,nosuid,size=64m \
   reverse-engineering-lab:local
 ```
 
-No bind mounts, host credentials or inbound ports are needed. Generated evidence
-inside this ephemeral container disappears on exit. The container contains the
+No bind mounts, host credentials or inbound ports are needed. The build mount
+explicitly permits execution of the newly compiled exercises; the original mount
+blocked their execution in CI. Evidence and temporary files do not need execution
+permission. See the [Docker tmpfs options](https://docs.docker.com/engine/storage/tmpfs/).
+
+Generated evidence inside this ephemeral container disappears on exit. The container contains the
 core compiler/runtime lab; headless Ghidra is run separately in CI.
 
 ## Reproduction limits and cleanup
